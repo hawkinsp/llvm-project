@@ -32,9 +32,7 @@ NB_MODULE(_mlir, m) {
                    &PyGlobals::setDialectSearchPrefixes)
       .def(
           "append_dialect_search_prefix",
-          [](PyGlobals &self, std::string moduleName) {
-            self.getDialectSearchPrefixes().push_back(std::move(moduleName));
-          },
+          &PyGlobals::addDialectSearchPrefix,
           "module_name"_a)
       .def(
           "_check_dialect_module_loaded",

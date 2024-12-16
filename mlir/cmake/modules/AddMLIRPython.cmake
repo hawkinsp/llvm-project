@@ -659,6 +659,7 @@ function(add_mlir_python_extension libname extname)
   elseif(ARG_PYTHON_BINDINGS_LIBRARY STREQUAL "nanobind")
     nanobind_add_module(${libname}
       NB_DOMAIN mlir
+      FREE_THREADED
       ${ARG_SOURCES}
     )
 
