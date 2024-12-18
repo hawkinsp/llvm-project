@@ -36,6 +36,36 @@ exports_files([
     "utils/lldbDataFormatters.py",
 ])
 
+config_setting(
+    name = "macos_arm64",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin_arm64",
+    },
+)
+
+config_setting(
+    name = "macos_x86_64_default",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin",
+    },
+)
+
+py_library(
+    name = "lit_lib",
+    testonly = True,
+    srcs = ["utils/lit/lit.py"] + glob(["utils/lit/lit/**/*.py"]),
+)
+
+config_setting(
+    name = "macos_x86_64",
+    values = {
+        "apple_platform_type": "macos",
+        "cpu": "darwin_x86_64",
+    },
+)
+
 # It may be tempting to add compiler flags here, but that should be avoided.
 # The necessary warnings and other compile flags should be provided by the
 # toolchain or the `.bazelrc` file. This is just a workaround until we have a
@@ -245,13 +275,15 @@ cc_library(
         "lib/Support/BLAKE3/llvm_blake3_prefix.h",
     ] + select({
         "@platforms//cpu:aarch64": [
-            "lib/Support/BLAKE3/blake3_neon.c",
+            # TODO(b/234415414): temporary disabled
+            #            "lib/Support/BLAKE3/blake3_neon.c",
         ],
         "@platforms//cpu:x86_64": [
-            "lib/Support/BLAKE3/blake3_avx2_x86-64_unix.S",
-            "lib/Support/BLAKE3/blake3_avx512_x86-64_unix.S",
-            "lib/Support/BLAKE3/blake3_sse2_x86-64_unix.S",
-            "lib/Support/BLAKE3/blake3_sse41_x86-64_unix.S",
+            # TODO(b/234415414): temporary disabled
+            # "lib/Support/BLAKE3/blake3_avx2_x86-64_unix.S",
+            # "lib/Support/BLAKE3/blake3_avx512_x86-64_unix.S",
+            # "lib/Support/BLAKE3/blake3_sse2_x86-64_unix.S",
+            # "lib/Support/BLAKE3/blake3_sse41_x86-64_unix.S",
         ],
         "//conditions:default": [
         ],
@@ -276,14 +308,16 @@ cc_library(
     ],
     copts = llvm_copts,
     defines = select({
-        "@platforms//cpu:aarch64": [
-        ],
+        # TODO(b/234415414): temporary disabled
+        #"@platforms//cpu:aarch64": [
+        #],
         "//conditions:default": [
             "BLAKE3_USE_NEON=0",
         ],
     }) + select({
-        "@platforms//cpu:x86_64": [
-        ],
+        # TODO(b/234415414): temporary disabled
+        # "@platforms//cpu:x86_64": [
+        # ],
         "//conditions:default": [
             "BLAKE3_NO_AVX2",
             "BLAKE3_NO_AVX512",
@@ -319,14 +353,6 @@ cc_library(
     deps = [
         ":config",
         ":Demangle",
-        # We unconditionally depend on the custom LLVM zlib wrapper. This will
-        # be an empty library unless zlib is enabled, in which case it will
-        # both provide the necessary dependencies and configuration defines.
-        "@llvm_zlib//:zlib",
-        # We unconditionally depend on the custom LLVM zstd wrapper. This will
-        # be an empty library unless zstd is enabled, in which case it will
-        # both provide the necessary dependencies and configuration defines.
-        "@llvm_zstd//:zstd",
     ],
 )
 

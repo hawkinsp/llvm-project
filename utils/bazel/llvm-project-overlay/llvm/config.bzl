@@ -97,8 +97,9 @@ builtin_thread_pointer = select({
 # TODO: We should split out host vs. target here.
 llvm_config_defines = os_defines + builtin_thread_pointer + select({
     "@bazel_tools//src/conditions:windows": native_arch_defines("X86", "x86_64-pc-win32"),
-    "@bazel_tools//src/conditions:darwin_arm64": native_arch_defines("AArch64", "arm64-apple-darwin"),
-    "@bazel_tools//src/conditions:darwin_x86_64": native_arch_defines("X86", "x86_64-unknown-darwin"),
+    "//llvm:macos_arm64": native_arch_defines("AArch64", "arm64-apple-darwin"),
+    "//llvm:macos_x86_64": native_arch_defines("X86", "x86_64-unknown-darwin"),
+    "//llvm:macos_x86_64_default": native_arch_defines("X86", "x86_64-unknown-darwin"),
     "@bazel_tools//src/conditions:linux_aarch64": native_arch_defines("AArch64", "aarch64-unknown-linux-gnu"),
     "@bazel_tools//src/conditions:linux_ppc64le": native_arch_defines("PowerPC", "powerpc64le-unknown-linux-gnu"),
     "@bazel_tools//src/conditions:linux_s390x": native_arch_defines("SystemZ", "systemz-unknown-linux_gnu"),
